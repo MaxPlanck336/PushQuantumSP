@@ -12,12 +12,8 @@ class QuboSPBinary:
         self.P1 = P1
         self.P2 = P2
         self.P3 = P3
-        #self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
-        print("Nodes in the graph:", list(self.gra.G.nodes))
-        print("Adjacency list keys:", list(self.gra.G.adj.keys()))
-        self.model = self.solve_preprocessing(P1, P2, P3)
+        self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
         print("Matrix: ", self.model)
-        
 
     def __inverter_matrix(self, sample):
         solution_dict = {
@@ -54,54 +50,6 @@ class QuboSPBinary:
             if target == i:
                 return True
         return False
-
-    def reduce_q(self, lidar):
-        #self.usedLidars.remove(lidar)
-        #self.mandatoryLidars.remove(lidar)
-        self.gra.G.remove_node(lidar)
-
-    def remove_slack_zero(self):
-        to_delete = []
-        for s in self.gra.G.nodes:
-            if not s in to_delete:
-                #if street point 
-                if len(s) == 3:
-                    #calc number of bits needed for slack with log2
-                    slackbits = self.__needed_bitnum(len(self.gra.G.adj[s].items()))
-                    if slackbits == 0:
-                        #get first lidar
-                        lidar_s = next(iter(self.gra.G.adj[s].items()))[0]
-                        all_sp = self.gra.G.adj[lidar_s]
-                        for sp in all_sp:
-                            to_delete.append(sp)
-                        to_delete.append(lidar_s)
-        for d in list(set(to_delete)):
-            self.gra.G.remove_node(d)
-
-    def find_similar_lidar(self):
-        ret = []
-        liders = []
-        for lidar1 in self.gra.G.nodes:
-            if len(lidar1) != 3:
-                liders.append(lidar1)
-        for lidar1 in liders:
-            for lidar2 in liders:
-                if lidar1 != lidar2:
-                    if lidar1 in self.gra.G.nodes and lidar2 in self.gra.G.nodes:
-                        adj1 = self.gra.G.adj[lidar1]
-                        adj2 = self.gra.G.adj[lidar2]
-                        #look if subset exists
-                        if adj1.items() <= adj2.items():
-                            self.reduce_q(lidar1)
-                        elif adj2.items() < adj1.items():
-                            self.reduce_q(lidar2)
-
-    def solve_preprocessing(self, P1, P2, P3):
-        self.find_similar_lidar()
-        self.remove_slack_zero()
-        print("#nodes: ", len(self.gra.G.nodes))
-        print(self.gra.G.nodes)
-        self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
 
     def __compute_QUBO_Matrix_binary(self, P1, P2, P3):
         #initialize variables
