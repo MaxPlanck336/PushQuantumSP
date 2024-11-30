@@ -12,10 +12,11 @@ class QuboSPBinary:
         self.P1 = P1
         self.P2 = P2
         self.P3 = P3
-        #self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
+        
         print("Nodes in the graph:", list(self.gra.G.nodes))
         print("Adjacency list keys:", list(self.gra.G.adj.keys()))
-        self.model = self.solve_preprocessing(P1, P2, P3)
+        self.solve_preprocessing(P1, P2, P3)
+        self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
         print("Matrix: ", self.model)
         
 
@@ -101,7 +102,6 @@ class QuboSPBinary:
         self.remove_slack_zero()
         print("#nodes: ", len(self.gra.G.nodes))
         print(self.gra.G.nodes)
-        self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
 
     def __compute_QUBO_Matrix_binary(self, P1, P2, P3):
         #initialize variables
