@@ -71,9 +71,9 @@ python <script_name>.py
 ### Summary of Results (Sample Output)
 
 Naive Approach:
-- Runtime: 4.9 seconds
+   - Runtime: 4.9 seconds
 Preprocessed Approach:
-- Runtime: 4.0 seconds
+   - Runtime: 4.0 seconds
 Time Saved: 19.56 %
 
 Preprocessing saves time and enhances results!
@@ -120,11 +120,11 @@ python <script_name>.py
 ### Summary
 
 Naive Approach:
--	Runtime: 0.0011 seconds
--	Objective Value: 10
+   -	Runtime: 0.0011 seconds
+   -	Objective Value: 10
 Preprocessed Approach:
--	Runtime: 0.0006 seconds
--	Objective Value: 6
+   -	Runtime: 0.0006 seconds
+   -	Objective Value: 6
 Time Saved: 45 %
 
 Leverage this script to tackle real-world optimization problems and present actionable results effectively!
