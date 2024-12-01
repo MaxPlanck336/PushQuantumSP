@@ -6,7 +6,7 @@ class SPPlot():
           self.data = data
           self.evaluation = evaluation
 
-     def plot_solution(self, hide_never_covered = True):
+     def plot_solution(self, hide_never_covered = True, title = "Solution"):
           pos = {node: node for node in self.data.G.nodes()}
           pos_opt= {node: node for node in self.evaluation.O.nodes()}
 
@@ -29,7 +29,7 @@ class SPPlot():
           plt.axis('equal')
           plt.grid(True)
           
-          plt.title("Solution")
+          plt.title(title)
           plt.text(0.5, -0.05, f'Activated Lidars: {self.evaluation.get_objective()} \n missing achievable coverage: {self.evaluation.check_solution()["missing_achievable_coverage"]}', fontsize=10, ha='center', va='top', transform=plt.gca().transAxes)
           plt.plot
           return plt

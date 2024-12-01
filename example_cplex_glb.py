@@ -10,7 +10,7 @@ import copy
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-params = {"lidar_density": 0.6, "street_point_density": 0.6}
+params = {"lidar_density": 0.1, "street_point_density": 0.1}
 data = SPData().create_problem_from_glb_file(**params)
 data_copy = copy.deepcopy(data)
 plt = SPPlot(data).plot_problem()
@@ -47,5 +47,5 @@ for constraint, violations in evaluation.check_solution().items():
     if len(violations) > 0:
         print(f"constraint {constraint} was violated {len(violations)} times")
 
-plt = SPPlot(data_copy, evaluation).plot_solution(hide_never_covered = True)
+plt = SPPlot(data_copy, evaluation).plot_solution(hide_never_covered = True, title = "M1 Model")
 plt.show()

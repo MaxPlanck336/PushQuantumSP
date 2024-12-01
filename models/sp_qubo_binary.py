@@ -1,6 +1,7 @@
 import math
 import time
 import numpy as np
+import networkx as nx
 
 class QuboSPBinary:
     def __init__(self, gra, P1=1, P2=2, P3=2, process=False) -> None: # process is a boolean to choose between the old QuboSPBinary and the new version implemented 
@@ -14,10 +15,19 @@ class QuboSPBinary:
         self.P2 = P2
         self.P3 = P3
         
+        self.identify_isolated_nodes()
         if process:
             self.solve_preprocessing(P1, P2, P3) #Processing part in order to reduce the dimensionality of the Qubo Matrix
+        self.identify_isolated_nodes()
         self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
         init_time = time.time() - start_time  
+
+    def identify_isolated_nodes(self):
+        """
+        This function identifies isolated nodes in the graph and removes them.
+        """
+        isolated_nodes = list(nx.isolates(self.gra.G))
+        print(f"Isolated nodes: {len(isolated_nodes)}")
         
     def __inverter_matrix(self, sample):
         solution_dict = {
