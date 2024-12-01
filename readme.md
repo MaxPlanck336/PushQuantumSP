@@ -28,15 +28,15 @@ This script showcases a naive approach versus a custom preprocessing approach to
 
 1.	Plug-and-Play Problem Generation:
 Modify parameters in params to quickly generate new sensor placement problems:
-'''
+```python
 params = {"version": 3, "num_cols": 43, "rad_max": 2.8}
-'''
+```
 
 2.	Solver Configuration:
 Adjust solver parameters for optimal performance:
-'''
+```python
 config = {"num_reads": 1000, "num_sweeps": 1000}
-'''
+```
 
 3.	Preprocessing Advantage:
 The custom preprocessing approach significantly reduces problem size, offering:
@@ -54,15 +54,15 @@ Plots provide immediate insights into:
 ### How to Run
 
 1.	Install Required Libraries:
-'''
-   pip install neal numpy networkx matplotlib
-'''
-   Ensure custom modules (SPData, SPQuboBinary, SPEvaluation, SPPlot) are available.
+```python
+pip install neal numpy networkx matplotlib
+```
+Ensure custom modules (SPData, SPQuboBinary, SPEvaluation, SPPlot) are available.
 
-2.	Run the Script:
-
-   python <script_name>.py
-
+3.	Run the Script:
+```python
+python <script_name>.py
+```
 
 3.	Analyze Results:
    •	Compare terminal outputs for runtimes and metrics.
@@ -109,13 +109,13 @@ This script tackles a real-world sensor placement problem, optimizing coverage i
 ### How to Use
 
 1.	Install dependencies:
-'''
-   pip install neal numpy matplotlib
-'''
+```python   
+pip install neal numpy matplotlib
+```
 2.	Run the script:
-'''
-   python <script_name>.py
-'''
+```python   
+python <script_name>.py
+```
 3.	Analyze results:
 
    •	Compare terminal metrics and constraint violations.
