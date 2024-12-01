@@ -132,3 +132,20 @@ Preprocessed Approach:
 Runtime_preprocessed / Runtime_naive: 54 %
 
 Leverage this script to tackle real-world optimization problems and present actionable results effectively!
+
+## Benchmark.py
+### List of issues in classical simulation algorithms :
+
+Unavailable solver :
+- ("QAOA", "ibm"): Access to IBM is currently not available on Luna.
+- ("VQE", "ibm"): Access to IBM is currently not available on Luna.
+- ("BF", ): Error message: Solver unavailable
+- ("SAGA_PL","dwave"): Error message: Solver unavailable
+- ("SAGA_PW","dwave"): Error message: Solver unavailable
+
+Solver with docs issue :
+- ("PT", "dwave"): invalid param (rtol)
+- ("QLSA", "dwave"): invalid param (rtol)
+- ("TS","dwave"): invalid params (num_reads, tenure, timeout, initial_state_generator)
+- ("DS","dwave"): invalid param (rtol)
+- ("QLTS","dwave"): invalid param (rtol)
