@@ -2,13 +2,13 @@
 
 ##Example_qubo_generator.py
 
-   This script showcases a naive approach versus a custom preprocessing approach to solving a sensor placement optimization problem using QUBO (Quadratic Unconstrained Binary Optimization). It’s designed to highlight how preprocessing can enhance solution quality and computational efficiency.
+This script showcases a naive approach versus a custom preprocessing approach to solving a sensor placement optimization problem using QUBO (Quadratic Unconstrained Binary Optimization). It’s designed to highlight how preprocessing can enhance solution quality and computational efficiency.
 
-   ###Key Goals:
+###Key Goals:
 
-      1.	Demonstrate problem-solving efficiency using preprocessing.
-      2.	Compare outcomes from naive and custom approaches.
-      3.	Provide visual and metric-based analysis to justify improvements.
+1.	Demonstrate problem-solving efficiency using preprocessing.
+2.	Compare outcomes from naive and custom approaches.
+3.	Provide visual and metric-based analysis to justify improvements.
 
    ###Workflow Overview
 
