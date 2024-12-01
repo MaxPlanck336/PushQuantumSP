@@ -2,9 +2,9 @@ import math
 import time
 import numpy as np
 
-class QuboSPBinary:
+
+class QuboSPBinary1:
     def __init__(self, gra, P1=1, P2=2, P3=2, process=False) -> None:
-        start_time = time.time()  # Start the timer for the initialization
         self.gra = gra
         self.radar1 = []
         self.radar0 = []     
@@ -14,12 +14,12 @@ class QuboSPBinary:
         self.P2 = P2
         self.P3 = P3
         
+        #print("Nodes in the graph:", list(self.gra.G.nodes))
+        #print("Adjacency list keys:", list(self.gra.G.adj.keys()))
         if process:
             self.solve_preprocessing(P1, P2, P3)
         self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
-        init_time = time.time() - start_time  # Calculate the initialization time
-        #print(f"Temps total: {init_time:.4f} seconds")
-        
+        #print("Matrix: ", self.model)
         
 
     def __inverter_matrix(self, sample):
@@ -32,9 +32,10 @@ class QuboSPBinary:
         return solution_dict
 
     def solve(self, solve_func, **config):
-        start_time = time.time()  # Start the timer for the solving process
+
+        start_time = time.time()
         answer = solve_func(Q=self.model, **config)
-        solve_time = time.time() - start_time  # Calculate the solving time
+        solve_time = time.time() - start_time
 
         solution = self.__inverter_matrix(answer.first.sample)
         info = answer.info
@@ -63,38 +64,27 @@ class QuboSPBinary:
         self.gra.G.remove_node(lidar)
 
     def remove_slack_zero(self):
-
         to_delete = []
-        for node in self.gra.G.nodes:
-            if node not in to_delete:
-                # If the node is a "street point"
-                if len(node) == 3:
-                    # Check if the node has neighbors
-                    if len(self.gra.G.adj[node]) == 0:
-                        #raise ValueError(f"Isolated node detected: {node}. This node has no neighbors.")
-                        print(f"Isolated node detected: {node}. This node has no neighbors.")
-                    else: 
-                        # Calculate the number of bits needed for slack using log2
-                        slackbits = self.__needed_bitnum(len(self.gra.G.adj[node].items()))
-                        if slackbits == 0:
-                            # Get the first lidar
-                            
-                            lidar_node = next(iter(self.gra.G.adj[node].items()))[0]
-                            # Add all street points connected to the lidar to the deletion list
-                            all_street_points = self.gra.G.adj[lidar_node]
-                            for street_point in all_street_points:
-                                to_delete.append(street_point)
-                            
-                            # Add the lidar to the deletion list and radar1
-                            to_delete.append(lidar_node)
-                            self.radar1.append(lidar_node)
-        
-        # Remove nodes marked for deletion
-        for node_to_delete in list(set(to_delete)):
-            self.gra.G.remove_node(node_to_delete)
-
+        for s in self.gra.G.nodes:
+            if not s in to_delete:
+                #if street point 
+                if len(s) == 3:
+                    #calc number of bits needed for slack with log2
+                    slackbits = self.__needed_bitnum(len(self.gra.G.adj[s].items()))
+                    if slackbits == 0:
+                        #get first lidar
+                        lidar_s = next(iter(self.gra.G.adj[s].items()))[0]
+                        all_sp = self.gra.G.adj[lidar_s]
+                        for sp in all_sp:
+                            to_delete.append(sp)
+                        to_delete.append(lidar_s)
+                        self.radar1.append(lidar_s)
+                        print("j'ai append !!!!")
+        for d in list(set(to_delete)):
+            self.gra.G.remove_node(d)
 
     def find_similar_lidar(self):
+        ret = []
         liders = []
         for lidar1 in self.gra.G.nodes:
             if len(lidar1) != 3:
@@ -114,14 +104,13 @@ class QuboSPBinary:
                             self.radar0.append(lidar2)
 
     def solve_preprocessing(self, P1, P2, P3):
-        start_time = time.time()  # Timer for preprocessing
         self.find_similar_lidar()
         self.remove_slack_zero()
-        preprocessing_time = time.time() - start_time  # Calculate preprocessing time
-        print(f"Preprocessing time: {preprocessing_time:.4f} seconds")
+        print("#nodes: ", len(self.gra.G.nodes))
+        print(self.gra.G.nodes)
 
     def __compute_QUBO_Matrix_binary(self, P1, P2, P3):
-        start_time = time.time()  # Timer for QUBO matrix computation
+        #initialize variables
         slacksize = 0
         slacklist = []
         #iterate over all nodes in G
@@ -140,7 +129,6 @@ class QuboSPBinary:
                     #only one connection to lidar, therefore lidar must be activated
                     if slackbits == 0:
                         self.mandatoryLidars.append(ls[0])
-                        print("surprise")
 
                 slacklist.append(
                     [lidar_per_SP, {slacksize + i + 1: 2**i for i in range(slackbits)}]
@@ -163,9 +151,12 @@ class QuboSPBinary:
         for i in range(0, len(self.usedLidars)):
             myQUBOMatrix[i, i] = P1
             if self.__is_in_list(self.mandatoryLidars, self.usedLidars[i]):
+                #space for improvement here!!!
+                #p2 random penalty added to ensure that the lidar is activated
                 myQUBOMatrix[i, i] -= P2
 
         for s in slacklist:
+            #
             if s[1]:
                 sdict = s[1]
                 ldict = {}
@@ -178,7 +169,4 @@ class QuboSPBinary:
                     for j in ldict:
                         myQUBOMatrix[i, j] += P3 * ldict[i] * ldict[j]
 
-        qubo_time = time.time() - start_time  # Calculate QUBO matrix computation time
-        print(f"QUBO matrix computation time: {qubo_time:.4f} seconds")
-        
         return myQUBOMatrix
