@@ -1,16 +1,16 @@
-#Hackathon Overview
+# Hackathon Overview
 
-##Example_qubo_generator.py
+## Example_qubo_generator.py
 
    This script showcases a naive approach versus a custom preprocessing approach to solving a sensor placement optimization problem using QUBO (Quadratic Unconstrained Binary Optimization). It’s designed to highlight how preprocessing can enhance solution quality and computational efficiency.
 
-   ###Key Goals:
+   ### Key Goals:
 
       1.	Demonstrate problem-solving efficiency using preprocessing.
       2.	Compare outcomes from naive and custom approaches.
       3.	Provide visual and metric-based analysis to justify improvements.
 
-   ###Workflow Overview
+   ### Workflow Overview
 
       1.	Problem Setup:
          •	Generate sensor placement data (SPData) with customizable parameters.
@@ -24,7 +24,7 @@
       4.	Comparison:
          •	Highlights differences in runtime, solution quality, and constraints between the two methods.
 
-   ###Key Features for Hackathon Use
+   ### Key Features for Hackathon Use
 
       1.	Plug-and-Play Problem Generation:
          Modify parameters in params to quickly generate new sensor placement problems:
@@ -51,7 +51,7 @@
          •	Runtime: Benchmarks computational efficiency.
          •	Constraint satisfaction: Validates solution feasibility.
 
-   ###How to Run
+   ### How to Run
 
       1.	Install Required Libraries:
 '''
@@ -68,7 +68,7 @@
          •	Compare terminal outputs for runtimes and metrics.
          •	Review plots for solution differences.
 
-   ###Summary of Results (Sample Output)
+   ### Summary of Results (Sample Output)
 
       Naive Approach:
       •	Runtime: 0.25 seconds
@@ -82,11 +82,11 @@
 
    Preprocessing saves time and enhances results!
 
-##Example_cplex_generator.py
+## Example_cplex_generator.py
 
    This script tackles a real-world sensor placement problem, optimizing coverage in urban environments while minimizing resources like Lidars. It compares solutions from QUBO-based Simulated Annealing and CPLEX, providing actionable insights and impactful visualizations for practical applications such as smart city planning.
 
-   ###Workflow
+   ### Workflow
 
       1.	Problem Setup:
       •	Generate a realistic urban sensor placement problem using .glb data.
@@ -100,13 +100,13 @@
       •	Validate constraint satisfaction.
       •	Visualize solutions for decision-making.
 
-   ###Key Features
+   ### Key Features
 
       •	Real-world relevance: Simulates urban planning scenarios.
       •	Solver flexibility: Compare fast heuristic (QUBO) with precise (CPLEX) methods.
       •	Metrics and visuals: Outputs objective values, constraint checks, and clear plots for coverage.
 
-   ###How to Use
+   ### How to Use
 
       1.	Install dependencies:
 '''
@@ -121,7 +121,7 @@
          •	Compare terminal metrics and constraint violations.
          •	Use plots for visual insights.
 
-   ###Summary
+   ### Summary
 
       Naive Approach:
       •	Runtime: 0.0011 seconds
