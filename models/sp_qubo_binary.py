@@ -19,7 +19,6 @@ class QuboSPBinary:
         self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
         print("Matrix: ", self.model)
         
-
     def __inverter_matrix(self, sample):
         solution_dict = {
             f"x_{self.usedLidars[i][0]}_{self.usedLidars[i][1]}_{self.usedLidars[i][2]}_{self.usedLidars[i][3]}_{self.usedLidars[i][4]}": sample[
@@ -57,9 +56,10 @@ class QuboSPBinary:
         return False
 
     def reduce_q(self, lidar):
-        #self.usedLidars.remove(lidar)
-        #self.mandatoryLidars.remove(lidar)
         self.gra.G.remove_node(lidar)
+        for edge in list(self.gra.G.edges):
+            if lidar in edge:
+                self.gra.G.remove_edge(edge[0], edge[1])
 
     def remove_slack_zero(self):
         to_delete = []

@@ -1,4 +1,5 @@
 import neal
+import copy
 
 from data.sp_data import SPData
 from models import SPQuboBinary
@@ -6,13 +7,15 @@ from evaluation.evaluation import SPEvaluation
 from plotting.sp_plot import SPPlot
 
 params = {"version": 3, "num_cols": 5, "rad_max": 2}
-data = SPData().gen_problem(**params) 
+data = SPData().gen_problem(**params)
 plt = SPPlot(data).plot_problem()
 plt.show()
 
 config = {"num_reads":1000,"num_sweeps":1000}
 solve_func = neal.SimulatedAnnealingSampler().sample_qubo
-qubo_model_bin = SPQuboBinary(data)
+#create independent copy of graph
+data_copy = copy.deepcopy(data)
+qubo_model_bin = SPQuboBinary(data_copy)
 answer = qubo_model_bin.solve(solve_func, **config)
 
 evaluation = SPEvaluation(data, answer['solution'])
