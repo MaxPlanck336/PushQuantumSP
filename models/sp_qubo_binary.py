@@ -16,12 +16,14 @@ class QuboSPBinary:
         self.P3 = P3
         
         self.identify_isolated_nodes()
+        #parameter to choose between the old QuboSPBinary and the new version implemented
         if process:
             self.solve_preprocessing(P1, P2, P3) #Processing part in order to reduce the dimensionality of the Qubo Matrix
         self.identify_isolated_nodes()
         self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
         init_time = time.time() - start_time  
 
+    # Function to identify isolated nodes in the graph
     def identify_isolated_nodes(self):
         """
         This function identifies isolated nodes in the graph and removes them.
@@ -102,7 +104,6 @@ class QuboSPBinary:
         # Remove nodes marked for deletion
         for node_to_delete in list(set(to_delete)):
             self.gra.G.remove_node(node_to_delete)
-
 
     def find_similar_lidar(self): 
         """
