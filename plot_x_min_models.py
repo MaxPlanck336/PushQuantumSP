@@ -9,7 +9,7 @@ import copy
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-# Define multiple parameter sets to test (expanded to 20 configurations)
+# Define multiple parameter sets to test
 """
 params_list = [
     {"version": 2, "num_cols": 10, "rad_max": 2.2},
@@ -65,7 +65,7 @@ for params in params_list:
     data = SPData().gen_problem(**params) 
     data_copy = copy.deepcopy(data)
     
-    # Solve without processing
+    # Solve without processing 
     qubo_model_bin_no_process = SPQuboBinary(data, process=False)
     answer_True_no_process = qubo_model_bin_no_process.solve(solve_func, **config)
     evaluation_no_process = SPEvaluation(data, answer_True_no_process['solution'])
@@ -78,7 +78,7 @@ for params in params_list:
     for key in qubo_model_bin_process.radar1:
         answer_True_process['solution'][key] = np.int8(1)
     
-    def convert_keys_to_strings(solution):
+    def convert_keys_to_strings(solution):  # To have some proper solution shape
         new_solution = {}
         for key, value in solution.items():
             if isinstance(key, tuple):
@@ -88,10 +88,10 @@ for params in params_list:
     answer_True_process['solution'] = convert_keys_to_strings(answer_True_process['solution'])
     evaluation_process = SPEvaluation(data, answer_True_process['solution'])
 
-    # Store the number of nodes, objectives, and violations
+    # Store the number of nodes, N(x_min), and violations
     nodes_count.append(len(data_copy.G.nodes))  # Number of nodes in the graph
-    objective_no_process.append(evaluation_no_process.get_objective())  # Objective without processing
-    objective_process.append(evaluation_process.get_objective())  # Objective with processing
+    objective_no_process.append(evaluation_no_process.get_objective())  # number of lidars activated in x_min without processing
+    objective_process.append(evaluation_process.get_objective())  # number of lidars activated in x_min with processing
 
     # Count violated constraints
     violations = 0
@@ -100,7 +100,6 @@ for params in params_list:
             violations += len(violation_list)
     violations_count.append(violations)
 
-# Create a colormap for the color bar
 norm = mcolors.Normalize(vmin=min(violations_count), vmax=max(violations_count))
 cmap = plt.get_cmap('viridis')
 
@@ -109,17 +108,13 @@ fig, ax = plt.subplots(figsize=(12, 8))
 sc = ax.scatter(nodes_count, objective_no_process, c=violations_count, cmap=cmap, norm=norm, marker='o', s=100, label='$M_1$')  # Increased size for 'o'
 sc2 = ax.scatter(nodes_count, objective_process, c=violations_count, cmap=cmap, norm=norm, marker='x', s=150, label='$M_2$')  # Increased size for 'x'
 
-# Add color bar
 cbar = plt.colorbar(sc, ax=ax)
 cbar.set_label('Number of Violated Constraints', fontsize=20)
 
-# Customize plot appearance
 ax.set_xlabel('Number N of Nodes', fontsize=26)
 ax.set_ylabel('$||x_{min}||=\sum_{i=1}^{N}x_{i}$', fontsize=26)
 ax.tick_params(axis='both', which='major', labelsize=20)
 ax.legend(fontsize=20)
 plt.grid(True)
 plt.savefig("plot_results_2models_version1.png", dpi=300)
-
-# Show the plot
 plt.show()

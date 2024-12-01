@@ -18,18 +18,19 @@ plt.show()
 config = {"num_reads":1000,"num_sweeps":1000}
 solve_func = neal.SimulatedAnnealingSampler().sample_qubo
 
+"""
+We are comparing the initial SPQuboBinary implemented (when process=False) 
+with the new SPQuboBinary implemented (when process=True)
+"""
 
-
-# Solution with process=False
+# Solution Without any data porcessing (matrix reduction)
 qubo_model_bin_no_process = SPQuboBinary(data, process=False)
 print("Shape of the QUBO matrix with process=False:", qubo_model_bin_no_process.model.shape)
 
 answer_True_no_process = qubo_model_bin_no_process.solve(solve_func, **config)
 print(answer_True_no_process['solution'])
 evaluation_no_process = SPEvaluation(data, answer_True_no_process['solution'])
-#print(f"solution clean with process=False: {evaluation_no_process.solution}")
 print(f"objective with process=False = {evaluation_no_process.get_objective()}")
-#print(answer_True_no_process)
 print('computation time with process=False: ', answer_True_no_process['runtime'])
 for constraint, violations in evaluation_no_process.check_solution().items():
     if len(violations) > 0:
@@ -38,24 +39,20 @@ for constraint, violations in evaluation_no_process.check_solution().items():
 plt = SPPlot(data_copy, evaluation_no_process).plot_solution(hide_never_covered=True)
 plt.show()
 
-# Solution with process=True
+# Solution with data processing 
 qubo_model_bin_process = SPQuboBinary(data, process=True)
-#print("radar0 with process=True:", qubo_model_bin_process.radar0)
-#print("radar1 with process=True:", qubo_model_bin_process.radar1)
+
 
 print("Shape of the QUBO matrix with process=True:", qubo_model_bin_process.model.shape)
 
-answer_True_process = qubo_model_bin_process.solve(solve_func, **config)
-#print(f"solution clean with process=True: {evaluation_process.solution}")
-for key in qubo_model_bin_process.radar0:
-    answer_True_process['solution'][key] = np.int8(0)
-    #print('answer[key] with process=True: ', evaluation_process.solution[key])
+answer_True_process = qubo_model_bin_process.solve(solve_func, **config) #This is the solution for the reduced Q
+for key in qubo_model_bin_process.radar0: #We are readding the trivial terms 
+    answer_True_process['solution'][key] = np.int8(0) 
 for key in qubo_model_bin_process.radar1:
-    answer_True_process['solution'][key] = np.int8(1)
-    #print('answer[key2] with process=True: ', evaluation_process.solution[key])
+    answer_True_process['solution'][key] = np.int8(1) #We are readding the trivial terms
 
 
-def convert_keys_to_strings(solution):
+def convert_keys_to_strings(solution): # To have some proper solution shape
     new_solution = {}
     for key, value in solution.items():
         if isinstance(key, tuple):  # Vérifie si la clé est un tuple
@@ -67,44 +64,28 @@ answer_True_process['solution'] = solution_process_str_keys = convert_keys_to_st
 evaluation_process = SPEvaluation(data, answer_True_process['solution'])
 
 
-# Normalize both answers
-#evaluation_process.solution = solution_process_str_keys = convert_keys_to_strings(evaluation_process.solution)
-print('computation time with process=True: ', answer_True_process['runtime'])   
-#normalized_no_process = {normalize_key(k): v for k, v in answer_True_no_process.items()}
+print('computation time with process=True: ', answer_True_process['runtime']) 
 
-#print(f"solution clean with process=True: {evaluation_process.solution}")
-print(f"objective with process=True = {evaluation_process.get_objective()}")
+print(f"objective with process=True = {evaluation_process.get_objective()}") #Print the minimal number of Lidar 
 for constraint, violations in evaluation_process.check_solution().items():
     if len(violations) > 0:
-        print(f"constraint {constraint} was violated {len(violations)} times")
+        print(f"constraint {constraint} was violated {len(violations)} times") #Print the conditions that were violated
 
 plt = SPPlot(data_copy, evaluation_process).plot_solution(hide_never_covered=True)
 plt.show()
 
 # Compare the two answers
-solution_process = np.atleast_1d(evaluation_process.solution)
-solution_no_process = np.atleast_1d(answer_True_no_process['solution'])
 
 # Compare the two solutions and print where the differences are
 if np.array_equal(evaluation_no_process.solution, evaluation_process.solution):
     print("The solutions are identical.")
-    #print(solution_no_process)
-    #print(solution_process)
+
 else:
     print("The solutions are different.")
 
     # Find where the values differ
-    differences = np.where(solution_process != solution_no_process)
+    differences = np.where(sevaluation_no_process.solution != evaluation_process.solution)
     
     # Print the indices where differences occur
     print(f"Differences found at indices: {differences}")
     
-    # Optionally, print the actual values that are different
-    #for idx in zip(*differences):
-       # print(f"Index {idx}: process=True value = {solution_process[idx]}, process=False value = {solution_no_process[idx]}")
-#if evaluation_process.get_objective() == evaluation_no_process.get_objective():
- #   print("The objectives are identical.")
-#else:
-#   print("The objectives are different.")
-#plot = SPPlot(data, evaluation_process).plot_solution(hide_never_covered=True)
-#plt.show()

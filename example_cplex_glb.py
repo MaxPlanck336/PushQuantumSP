@@ -10,7 +10,7 @@ import copy
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-params = {"lidar_density": 0.1, "street_point_density": 0.1}
+params = {"lidar_density": 0.6, "street_point_density": 0.6}
 data = SPData().create_problem_from_glb_file(**params)
 data_copy = copy.deepcopy(data)
 plt = SPPlot(data).plot_problem()
@@ -20,8 +20,8 @@ cplex_model = SPCplex(data)
 config = {"num_reads":1000,"num_sweeps":1000}
 solve_func = neal.SimulatedAnnealingSampler().sample_qubo
 
-# Solution with process=False
-qubo_model_bin_process = SPQuboBinary(data, process=False)
+# Solution with process=False or True
+qubo_model_bin_process = SPQuboBinary(data, process=True) #choose whether to process or not
 print("Shape of the QUBO matrix with process=False:", qubo_model_bin_process.model.shape)
 
 answer = qubo_model_bin_process.solve(solve_func, **config)
@@ -40,10 +40,7 @@ def convert_keys_to_strings(solution):
 answer['solution'] = convert_keys_to_strings(answer['solution'])
 evaluation_process = SPEvaluation(data, answer['solution'])
 
-#print(answer['solution'])
-#answer = cplex_model.solve()
 evaluation = SPEvaluation(data, answer["solution"])
-#print(f"solution clean: {evaluation.solution}")
 
 print(f"objective = {evaluation.get_objective()}")
 for constraint, violations in evaluation.check_solution().items():

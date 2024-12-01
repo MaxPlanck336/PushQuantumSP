@@ -3,8 +3,8 @@ import time
 import numpy as np
 
 class QuboSPBinary:
-    def __init__(self, gra, P1=1, P2=2, P3=2, process=False) -> None:
-        start_time = time.time()  # Start the timer for the initialization
+    def __init__(self, gra, P1=1, P2=2, P3=2, process=False) -> None: # process is a boolean to choose between the old QuboSPBinary and the new version implemented 
+        start_time = time.time() 
         self.gra = gra
         self.radar1 = []
         self.radar0 = []     
@@ -15,11 +15,9 @@ class QuboSPBinary:
         self.P3 = P3
         
         if process:
-            self.solve_preprocessing(P1, P2, P3)
+            self.solve_preprocessing(P1, P2, P3) #Processing part in order to reduce the dimensionality of the Qubo Matrix
         self.model = self.__compute_QUBO_Matrix_binary(P1, P2, P3)
-        init_time = time.time() - start_time  # Calculate the initialization time
-        #print(f"Temps total: {init_time:.4f} seconds")
-        
+        init_time = time.time() - start_time  
         
 
     def __inverter_matrix(self, sample):
@@ -32,9 +30,9 @@ class QuboSPBinary:
         return solution_dict
 
     def solve(self, solve_func, **config):
-        start_time = time.time()  # Start the timer for the solving process
+        start_time = time.time()  
         answer = solve_func(Q=self.model, **config)
-        solve_time = time.time() - start_time  # Calculate the solving time
+        solve_time = time.time() - start_time  
 
         solution = self.__inverter_matrix(answer.first.sample)
         info = answer.info
@@ -58,11 +56,11 @@ class QuboSPBinary:
         return False
 
     def reduce_q(self, lidar):
-        #self.usedLidars.remove(lidar)
-        #self.mandatoryLidars.remove(lidar)
         self.gra.G.remove_node(lidar)
 
     def remove_slack_zero(self):
+        """
+        This function removes lidars if a street point is connected to this unique lidar."""
 
         to_delete = []
         for node in self.gra.G.nodes:
@@ -76,7 +74,7 @@ class QuboSPBinary:
                     else: 
                         # Calculate the number of bits needed for slack using log2
                         slackbits = self.__needed_bitnum(len(self.gra.G.adj[node].items()))
-                        if slackbits == 0:
+                        if slackbits == 0: #If slackbits == 0 the we know that v_i is connected to a unique lidar (which can then be trivially put to 1)
                             # Get the first lidar
                             
                             lidar_node = next(iter(self.gra.G.adj[node].items()))[0]
@@ -94,10 +92,13 @@ class QuboSPBinary:
             self.gra.G.remove_node(node_to_delete)
 
 
-    def find_similar_lidar(self):
+    def find_similar_lidar(self): 
+        """
+        Find lidars acting on the same street points and reduce the dimensionality of the Qubo Matrix
+        """
         liders = []
         for lidar1 in self.gra.G.nodes:
-            if len(lidar1) != 3:
+            if len(lidar1) != 3: #Checking that the node is indeed a lidar
                 liders.append(lidar1)
         for lidar1 in liders:
             for lidar2 in liders:
@@ -113,13 +114,11 @@ class QuboSPBinary:
                             self.reduce_q(lidar2)
                             self.radar0.append(lidar2)
 
-    def solve_preprocessing(self, P1, P2, P3):
-        start_time = time.time()  # Timer for preprocessing
+    def solve_preprocessing(self, P1, P2, P3): #Putting the 2 processing part together
+        start_time = time.time()  
         self.find_similar_lidar()
         self.remove_slack_zero()
         preprocessing_time = time.time() - start_time  # Calculate preprocessing time
-        print(f"Preprocessing time: {preprocessing_time:.4f} seconds")
-
     def __compute_QUBO_Matrix_binary(self, P1, P2, P3):
         start_time = time.time()  # Timer for QUBO matrix computation
         slacksize = 0
@@ -140,7 +139,6 @@ class QuboSPBinary:
                     #only one connection to lidar, therefore lidar must be activated
                     if slackbits == 0:
                         self.mandatoryLidars.append(ls[0])
-                        print("surprise")
 
                 slacklist.append(
                     [lidar_per_SP, {slacksize + i + 1: 2**i for i in range(slackbits)}]
